@@ -1,48 +1,61 @@
-# --- Nvirgula Suite v3 (Mature Manual Logic) ---
-# A consolidated version of the manual logic suite. This function returns 
-# a detailed metadata list: [Status, Converted Value, Is_Negative, Is_Decimal].
-# It is designed to be highly descriptive, allowing for complex business logic.
+# --- Nvirgula Suite v4 (High-Precision Manual Parsing) ---
+# This version prioritizes data integrity by processing strings character by character.
+# By avoiding direct string-to-float conversion, we eliminate binary representation 
+# noise (e.g., 52.300000000000004). 
+# Returns: [Status, Converted Value, Is_Negative, Is_Float]
 
-def nvirgula(num):    
-    # Advanced handler that validates numbers and returns specific type metadata.
-    ler1 = ""                                # Variable declaration
-    ler2 = 0                                 # Variable declaration
-    ref = -1                                 # Variable declaration
-    dj = False                               # Variable declaration
-    
-    for ler in num:                          # Reads characters from the input text
-        if ler == "," or ler == ".":         # Detects comma (,) or dot (.)
-            ler = ""                         # Cleans separators
-            ler2 = 1                         # Flags that a separator was detected
-        if ler2 == 1:                        # If separator was found
-            ref = ref + 1                    # Counts decimal places after the separator
-        ler1 = ler1 + ler                    # Builds the clean number string
-    
-    dj = ler1.isdigit()                      # Checks if the string consists of positive digits
-    if dj == False:                          # If not a positive integer string
-        try:
-            float(ler1)                      # Test for negative numbers
-            dj = 3                           # Flags that a negative value was detected
-        except:
-            dj = False                       # Not a valid numerical value
-            
-    # Return Rule: [Success, Converted Value, Is_Negative, Is_Decimal]
-    
-    if dj == True and ler2 == 1:             # Case: Positive Decimal (Float)
-        ler1 = float(ler1) / (10**ref)       # Applies decimal logic
-        return [True, ler1, False, True]     # Returns: [True, float_val, False, True]
-    
-    if dj == True and ler2 == 0:             # Case: Positive Integer (Int)
-        ler1 = float(ler1)                   # Internal float conversion
-        return [True, int(ler1), False, False] # Returns: [True, int_val, False, False]
+def nvirgula(num):
+    """
+    Sanitizes numerical strings using manual fixed-point logic for maximum precision.
+    Ideal for ERPs and industrial systems where precision is mandatory.
+    """
+    # Checks if the input is actually a string to avoid processing errors
+    if not isinstance(num, str):
+        return [False, num, False, False]
 
-    if dj == 3 and ler2 == 1:                # Case: Negative Decimal (Float)
-        ler1 = float(ler1) / (10**ref)       # Applies decimal logic to negative value
-        return [True, ler1, True, True]      # Returns: [True, float_val, True, True]
-    
-    if dj == 3 and ler2 == 0:                # Case: Negative Integer (Int)
-        ler1 = float(ler1)                   # Internal float conversion
-        return [True, int(ler1), True, False] # Returns: [True, int_val, True, False]
+    # Buffer to store only the numeric digits extracted from the string
+    buffer_digits = ""
+    # Boolean flag to indicate if a decimal separator was found
+    is_float = False
+    # Counter to track the number of digits after the decimal separator
+    decimal_count = -1
+    # Check if the string starts with a minus sign (ignoring leading spaces)
+    is_negative = num.strip().startswith("-")
+
+    # Step 1: Character-by-character parsing loop
+    for char in num:
+        # If a comma or dot is found, we mark the number as a float
+        if char in (",", "."):
+            is_float = True
+            continue # Move to the next character without adding the separator to the buffer
         
-    if dj == False:                          # Case: Validation Failure
-        return [False, num, False, False]    # Returns: [False, original_input, False, False]
+        # Only add to buffer if it is a digit or a minus sign at the very beginning
+        if char.isdigit() or (char == "-" and not buffer_digits):
+            buffer_digits += char # Append digit to the clean numeric string
+            # If we are already past a separator, increment the decimal place counter
+            if is_float:
+                decimal_count += 1
+
+    try:
+        # Step 2: Basic Validation
+        # If the buffer is empty or contains only a minus sign, the input is invalid
+        if not buffer_digits or buffer_digits == "-":
+            return [False, num, False, False]
+
+        # Step 3: Numerical Reconstruction Logic
+        if is_float:
+            # Convert the clean string of digits to a float
+            raw_val = float(buffer_digits)
+            # Re-position the decimal point by dividing by 10 raised to the count of decimals
+            converted_val = raw_val / (10 ** (decimal_count + 1))
+        else:
+            # If no separator was found, convert directly to integer
+            converted_val = int(buffer_digits)
+
+        # Step 4: Final Return
+        # Returns [Success, Value, Negative_Flag, Float_Flag]
+        return [True, converted_val, is_negative, is_float]
+
+    except (ValueError, ZeroDivisionError):
+        # Catch any unexpected mathematical or conversion errors
+        return [False, num, False, False]
