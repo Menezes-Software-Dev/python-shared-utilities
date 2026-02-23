@@ -6,10 +6,10 @@ Data Cleaning Tools / Ferramentas de Limpeza de Dados
 
 [PT] Este diretório contém scripts especializados para sanitização e normalização de dados, focados em garantir a integridade antes da inserção em base de dados ou processamento matemático. Estas ferramentas foram desenvolvidas para unir a flexibilidade da entrada de dados humana aos requisitos rigorosos do sistema.
 
-🛠️ Tool: nvirgula.py
+🛠️ Tool: numeric_validator.py
 
-[EN] A high-precision numerical sanitizer that handles regional separators (commas and dots).
-[PT] Um sanitizador numérico de alta precisão que trata separadores regionais (vírgulas e pontos).
+[EN] A high-precision numerical validator that handles regional separators (commas and dots) and prevents binary noise.
+[PT] Um validador numérico de alta precisão que trata separadores regionais (vírgulas e pontos) e evita ruído binário.
 
 Why use this? / Porquê usar esta ferramenta?
 
@@ -27,24 +27,24 @@ Why use this? / Porquê usar esta ferramenta?
 
 📈 Evolution History / Histórico de Evolução
 
-[EN] This tool evolved through 4 distinct versions:
+[EN] This tool evolved through 4 distinct versions to reach professional maturity:
 
 v1: Basic loop logic.
 
 v2: Expansion to a function suite with negative support.
 
-v3: Implementation of dynamic typing and metadata.
+v3: Implementation of dynamic typing and metadata return.
 
-v4: Refactored for high precision and production-ready performance.
+v4: Refactored for high precision, manual parsing, and production-ready performance.
 
-[PT] Esta ferramenta evoluiu através de 4 versões distintas:
+[PT] Esta ferramenta evoluiu através de 4 versões distintas até atingir a maturidade profissional:
 
 v1: Lógica de loop básica.
 
 v2: Expansão para uma suíte de funções com suporte a negativos.
 
-v3: Implementação de tipagem dinâmica e metadados.
+v3: Implementação de tipagem dinâmica e retorno de metadados.
 
-v4: Refatorada para alta precisão e performance pronta para produção.
+v4: Refatorada para alta precisão, análise manual e performance pronta para produção.
 
 Status: Version 4 (Consolidated / Consolidada)
